@@ -12,7 +12,7 @@ const SubtaskSchema = new mongoose.Schema({
     enum: ['pending', 'completed'], 
     default: 'pending' 
   }
-}, { _id: false });
+});
 
 const TaskSchema = new mongoose.Schema({
   title: {

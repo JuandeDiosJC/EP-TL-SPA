@@ -32,9 +32,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="antialiased" >
         {/* Barra de navegación */}
-        <nav className="p-4 bg-gray-200 flex gap-4">
+        <nav className="p-4 bg-gray-200 flex gap-4  ">
           <a href="/login" className="underline">
             Login
           </a>

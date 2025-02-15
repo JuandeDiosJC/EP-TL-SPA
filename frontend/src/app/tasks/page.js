@@ -144,6 +144,31 @@ export default function TasksPage() {
     }
   };
 
+  const [editingSubtask, setEditingSubtask] = useState({
+    taskId: null,
+    subtaskId: null,
+    newTitle: "",
+  });
+
+  const handleSaveEditSubtask = async (taskId, subtaskId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const updatedTask = await updateSubtask(
+        taskId,
+        subtaskId,
+        { title: editingSubtask.newTitle },
+        token
+      );
+      // Actualiza la tarea en el estado con la respuesta actualizada
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === taskId ? updatedTask : task))
+      );
+      setEditingSubtask({ taskId: null, subtaskId: null, newTitle: "" });
+    } catch (err) {
+      console.error("Error al editar la subtarea", err);
+    }
+  };  
+
   return (
     <main className="p-4">
       <h1 className="text-2xl font-bold mb-4">Mis Tareas</h1>
@@ -230,31 +255,79 @@ export default function TasksPage() {
                   {/* Gestión de Subtareas */}
                   <div className="mt-4 ml-4">
                     <h3 className="text-md font-semibold">Subtareas</h3>
+                    
                     {task.subtasks && task.subtasks.length > 0 ? (
-                      task.subtasks.map((subtask, idx) => (
-                        <div key={idx} className="flex items-center justify-between border p-1 mt-1">
-                          <span className={`text-sm ${subtask.status === "completed" ? "line-through" : ""}`}>
-                            {subtask.title}
-                          </span>
-                          <div>
-                            <button
-                              onClick={() => handleToggleSubtaskStatus(task._id, subtask)}
-                              className="bg-blue-500 text-white p-1 rounded mr-1 text-xs"
-                            >
-                              Toggle
-                            </button>
-                            <button
-                              onClick={() => handleDeleteSubtask(task._id, subtask._id)}
-                              className="bg-red-500 text-white p-1 rounded text-xs"
-                            >
-                              Eliminar
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm">No hay subtareas.</p>
-                    )}
+  task.subtasks.map((subtask) => {
+    const isEditing =
+      editingSubtask.taskId === task._id && editingSubtask.subtaskId === subtask._id;
+    return (
+      <div key={subtask._id} className="flex items-center justify-between border p-1 mt-1">
+        {isEditing ? (
+          <>
+            <input
+              type="text"
+              value={editingSubtask.newTitle}
+              onChange={(e) =>
+                setEditingSubtask({ ...editingSubtask, newTitle: e.target.value })
+              }
+              className="text-sm border p-1"
+            />
+            <button
+              onClick={() => handleSaveEditSubtask(task._id, subtask._id)}
+              className="bg-green-500 text-white p-1 rounded ml-1 text-xs"
+            >
+              Guardar
+            </button>
+            <button
+              onClick={() =>
+                setEditingSubtask({ taskId: null, subtaskId: null, newTitle: "" })
+              }
+              className="bg-gray-500 text-white p-1 rounded ml-1 text-xs"
+            >
+              Cancelar
+            </button>
+          </>
+        ) : (
+          <>
+            <span className={`text-sm ${subtask.status === "completed" ? "line-through" : ""}`}>
+              {subtask.title}
+            </span>
+            <div>
+              <button
+                onClick={() =>
+                  setEditingSubtask({
+                    taskId: task._id,
+                    subtaskId: subtask._id,
+                    newTitle: subtask.title,
+                  })
+                }
+                className="bg-yellow-500 text-white p-1 rounded mr-1 text-xs"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleToggleSubtaskStatus(task._id, subtask)}
+                className="bg-blue-500 text-white p-1 rounded mr-1 text-xs"
+              >
+                Tarea Completada
+              </button>
+              <button
+                onClick={() => handleDeleteSubtask(task._id, subtask._id)}
+                className="bg-red-500 text-white p-1 rounded text-xs"
+              >
+                Eliminar
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  })
+) : (
+  <p className="text-sm">No hay subtareas.</p>
+)}
+
+
                     <div className="mt-2 flex">
                       <input
                         type="text"

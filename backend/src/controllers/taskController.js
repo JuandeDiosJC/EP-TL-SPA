@@ -115,18 +115,14 @@ exports.updateSubtask = async (req, res) => {
     if(!subtask) {
       return res.status(404).json({ msg: "Subtarea no encontrada" });
     }
+    // Actualizar campos si se envían en el cuerpo de la petición
     if(title !== undefined) subtask.title = title;
     if(status !== undefined) subtask.status = status;
-
-    if(subtask.status === 'pending') {
-      task.status = 'pending';
-    }
-
     await task.save();
     res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error al actualizar la subtarea" });
+    console.error("Error en updateSubtask:", error);
+    res.status(500).json({ msg: "Error al actualizar la subtarea", error: error.message });
   }
 };
 
@@ -135,19 +131,24 @@ exports.deleteSubtask = async (req, res) => {
   try {
     const { id, subtaskId } = req.params;
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
+    
+    // Buscar la subtarea. Si no existe, retorna un 404.
     const subtask = task.subtasks.id(subtaskId);
-    if(!subtask) {
+    if (!subtask) {
+      console.error("Subtarea no encontrada en la tarea:", task.subtasks);
       return res.status(404).json({ msg: "Subtarea no encontrada" });
     }
-    subtask.remove();
+    
+    // Usamos el método pull() para eliminar la subtarea por su _id.
+    task.subtasks.pull(subtaskId);
     await task.save();
     res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error al eliminar la subtarea" });
+    console.error("Error en deleteSubtask:", error);
+    res.status(500).json({ msg: "Error al eliminar la subtarea", error: error.message });
   }
 };
 
