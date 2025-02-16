@@ -19,7 +19,8 @@ export default function TasksPage() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editedTaskTitle, setEditedTaskTitle] = useState("");
-  
+  const [filterStatus, setFilterStatus] = useState("all");
+
   // Para subtareas
   const [newSubtasks, setNewSubtasks] = useState({});
   const [editingSubtask, setEditingSubtask] = useState({
@@ -27,7 +28,7 @@ export default function TasksPage() {
     subtaskId: null,
     newTitle: "",
   });
-  
+
   // Para comentarios
   const [newComment, setNewComment] = useState({});
   const [editingComment, setEditingComment] = useState({
@@ -35,7 +36,7 @@ export default function TasksPage() {
     commentId: null,
     newText: "",
   });
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -224,9 +225,30 @@ export default function TasksPage() {
     }
   };
 
+  // Filtrado de tareas según el estatus
+  const filteredTasks = tasks.filter((task) => {
+    if (filterStatus === "all") return true;
+    return task.status === filterStatus;
+  });
+
   return (
     <main className="p-4">
       <h1 className="text-2xl font-bold mb-4">Mis Tareas</h1>
+
+      {/* Controles de filtrado */}
+      <div className="mb-4">
+        <span className="mr-2">Filtrar por estatus:</span>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="border p-1 rounded"
+        >
+          <option value="all">Todas</option>
+          <option value="pending">Pendientes</option>
+          <option value="completed">Completadas</option>
+        </select>
+      </div>
+
       {isLoading ? (
         <div className="flex items-center justify-center h-64">
           <span className="text-lg font-semibold">Cargando...</span>
@@ -246,12 +268,12 @@ export default function TasksPage() {
               Agregar Tarea
             </button>
           </div>
-          {/* Listado de tareas */}
+          {/* Listado de tareas filtradas */}
           <div>
-            {tasks.length === 0 ? (
+            {filteredTasks.length === 0 ? (
               <p>No hay tareas.</p>
             ) : (
-              tasks.map((task) => (
+              filteredTasks.map((task) => (
                 <div key={task._id} className="border p-2 mb-4">
                   <div className="flex justify-between items-center">
                     {editingTaskId === task._id ? (
