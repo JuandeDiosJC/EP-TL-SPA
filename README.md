@@ -113,4 +113,4 @@ El proyecto se organiza en dos carpetas principales:
 
 1. El archivo .env contiene el token de acceso a la base de datos, el cual solo tiene una vigencia de 15 días, por cuestiones de seguridad.
 
-2. El clúster de la base de datos fue configurado para aceptar la conexión desde cualquier IP durante 6 días, después del 22 de febrero de 2025 se perderá comunicación con MongoDB Atlas. 
+2. El clúster de la base de datos fue configurado para aceptar la conexión desde cualquier IP durante 6 días, después del 22 de febrero de 2025 se perderá comunicación con MongoDB Atlas.
