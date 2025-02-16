@@ -4,7 +4,7 @@ const Task = require('../models/Task');
 exports.createTask = async (req, res) => {
   try {
     const { title } = req.body;
-    if(!title) {
+    if (!title) {
       return res.status(400).json({ msg: "El título es obligatorio" });
     }
 
@@ -32,16 +32,16 @@ exports.getTasks = async (req, res) => {
   }
 };
 
-// Actualizar una tarea (título, status, etc.)
+// Actualizar una tarea
 exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, status } = req.body;
 
-    if(status === 'completed') {
+    if (status === 'completed') {
       const taskToCheck = await Task.findById(id);
       const anyPending = taskToCheck.subtasks.some(sub => sub.status === 'pending');
-      if(anyPending) {
+      if (anyPending) {
         return res.status(400).json({
           msg: "No se puede marcar la tarea como completada si existen subtareas pendientes"
         });
@@ -54,7 +54,7 @@ exports.updateTask = async (req, res) => {
       { new: true }
     );
 
-    if(!updatedTask) {
+    if (!updatedTask) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
 
@@ -70,7 +70,7 @@ exports.deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
     const deletedTask = await Task.findOneAndDelete({ _id: id, user: req.user.userId });
-    if(!deletedTask) {
+    if (!deletedTask) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     res.json({ msg: "Tarea eliminada" });
@@ -85,11 +85,11 @@ exports.createSubtask = async (req, res) => {
   try {
     const { id } = req.params;
     const { title } = req.body;
-    if(!title) {
+    if (!title) {
       return res.status(400).json({ msg: "El título de la subtarea es obligatorio" });
     }
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     task.subtasks.push({ title });
@@ -108,16 +108,16 @@ exports.updateSubtask = async (req, res) => {
     const { title, status } = req.body;
 
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     const subtask = task.subtasks.id(subtaskId);
-    if(!subtask) {
+    if (!subtask) {
       return res.status(404).json({ msg: "Subtarea no encontrada" });
     }
     // Actualizar campos si se envían en el cuerpo de la petición
-    if(title !== undefined) subtask.title = title;
-    if(status !== undefined) subtask.status = status;
+    if (title !== undefined) subtask.title = title;
+    if (status !== undefined) subtask.status = status;
     await task.save();
     res.json(task);
   } catch (error) {
@@ -134,15 +134,15 @@ exports.deleteSubtask = async (req, res) => {
     if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
-    
-    // Buscar la subtarea. Si no existe, retorna un 404.
+
+    // Buscar la subtarea
     const subtask = task.subtasks.id(subtaskId);
     if (!subtask) {
       console.error("Subtarea no encontrada en la tarea:", task.subtasks);
       return res.status(404).json({ msg: "Subtarea no encontrada" });
     }
-    
-    // Usamos el método pull() para eliminar la subtarea por su _id.
+
+    // pull() eliminar por su _id
     task.subtasks.pull(subtaskId);
     await task.save();
     res.json(task);
@@ -157,11 +157,11 @@ exports.addComment = async (req, res) => {
   try {
     const { id } = req.params; // ID de la tarea
     const { text } = req.body;
-    if(!text) {
+    if (!text) {
       return res.status(400).json({ msg: "El comentario no puede estar vacío" });
     }
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     //Agrega el comentario
@@ -180,11 +180,11 @@ exports.updateComment = async (req, res) => {
     const { id, commentId } = req.params;
     const { text } = req.body;
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     const comment = task.comments.id(commentId);
-    if(!comment) {
+    if (!comment) {
       return res.status(404).json({ msg: "Comentario no encontrado" });
     }
     comment.text = text;
@@ -208,7 +208,7 @@ exports.deleteComment = async (req, res) => {
     if (!comment) {
       return res.status(404).json({ msg: "Comentario no encontrado" });
     }
-    // En lugar de comment.remove(), usamos pull() para eliminar por _id
+    // pull() para eliminar por _id
     task.comments.pull(commentId);
     await task.save();
     res.json(task);

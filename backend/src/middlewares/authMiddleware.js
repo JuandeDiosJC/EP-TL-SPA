@@ -8,7 +8,7 @@ exports.protect = (req, res, next) => {
     }
     const token = header.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Guardamos la info del usuario en req.user
+    req.user = decoded; // Guarda la info del usuario en req.user
     next();
   } catch (error) {
     return res.status(401).json({ msg: "Token inválido" });

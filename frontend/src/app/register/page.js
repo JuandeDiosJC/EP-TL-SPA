@@ -14,7 +14,7 @@ export default function RegisterPage() {
     try {
       const response = await registerUser(formData.name, formData.email, formData.password);
       setSuccess(response.msg);
-      // Redirige al login después de 2 segundos
+      // Redirige al login
       setTimeout(() => {
         router.push("/login");
       }, 2000);
