@@ -232,11 +232,11 @@ export default function TasksPage() {
   });
 
   return (
-    <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Mis Tareas</h1>
+    <main className="p-4 bg-gradient-to-r from-purple-100 to-purple-200 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-center">Mis Tareas</h1>
 
       {/* Controles de filtrado */}
-      <div className="mb-4">
+      <div className="mb-6 flex flex-col md:flex-row items-center justify-center gap-2">
         <span className="mr-2">Filtrar por estatus:</span>
         <select
           value={filterStatus}
@@ -256,63 +256,79 @@ export default function TasksPage() {
       ) : (
         <>
           {/* Formulario para crear una nueva tarea */}
-          <div className="mb-4">
+          <div className="mb-6 flex flex-col md:flex-row gap-2">
             <input
               type="text"
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               placeholder="Nueva tarea..."
-              className="border p-2 rounded mr-2"
+              className="border p-2 rounded flex-1"
             />
-            <button onClick={handleCreateTask} className="bg-blue-500 text-white p-2 rounded">
+            <button
+              onClick={handleCreateTask}
+              className="bg-blue-500 text-white p-2 rounded"
+            >
               Agregar Tarea
             </button>
           </div>
           {/* Listado de tareas filtradas */}
-          <div>
+          <div className="space-y-6">
             {filteredTasks.length === 0 ? (
-              <p>No hay tareas.</p>
+              <p className="text-center">No hay tareas.</p>
             ) : (
               filteredTasks.map((task) => (
-                <div key={task._id} className="border p-2 mb-4">
-                  <div className="flex justify-between items-center">
+                <div key={task._id} className="border p-4 mb-4 rounded shadow-sm bg-white">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                     {editingTaskId === task._id ? (
                       <>
                         <input
                           type="text"
                           value={editedTaskTitle}
                           onChange={(e) => setEditedTaskTitle(e.target.value)}
-                          className="border p-1"
+                          className="border p-1 mb-2 md:mb-0 flex-1"
                         />
-                        <button
-                          onClick={() => handleSaveEdit(task._id)}
-                          className="bg-green-500 text-white p-1 rounded ml-2"
-                        >
-                          Guardar
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="bg-gray-500 text-white p-1 rounded ml-2"
-                        >
-                          Cancelar
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleSaveEdit(task._id)}
+                            className="bg-green-500 text-white p-1 rounded"
+                          >
+                            Guardar
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="bg-gray-500 text-white p-1 rounded"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
                       </>
                     ) : (
                       <>
                         <div>
-                          <h2 className="text-lg">{task.title}</h2>
-                          <p>Estatus: {task.status}</p>
+                          <h2 className="text-xl font-semibold">{task.title}</h2>
+                          <p className="text-sm">
+                            Estatus:{" "}
+                            <span
+                              className={
+                                task.status === "completed"
+                                  ? "text-green-600"
+                                  : "text-yellow-600"
+                              }
+                            >
+                              {task.status}
+                            </span>
+                          </p>
                         </div>
-                        <div>
+                        <div className="flex gap-2 mt-2 md:mt-0">
                           <button
                             onClick={() => handleEditTask(task)}
-                            className="bg-yellow-500 text-white p-2 rounded mr-2"
+                            className="bg-yellow-500 text-white p-2 rounded"
                           >
                             Editar
                           </button>
                           <button
                             onClick={() => handleToggleStatus(task)}
-                            className="bg-blue-500 text-white p-2 rounded mr-2"
+                            className="bg-blue-500 text-white p-2 rounded"
                           >
                             Cambiar Estado
                           </button>
@@ -328,14 +344,17 @@ export default function TasksPage() {
                   </div>
                   {/* Gestión de Subtareas */}
                   <div className="mt-4 ml-4">
-                    <h3 className="text-md font-semibold">Subtareas</h3>
+                    <h3 className="text-lg font-medium">Subtareas</h3>
                     {task.subtasks && task.subtasks.length > 0 ? (
                       task.subtasks.map((subtask) => {
                         const isEditing =
                           editingSubtask.taskId === task._id &&
                           editingSubtask.subtaskId === subtask._id;
                         return (
-                          <div key={subtask._id} className="flex items-center justify-between border p-1 mt-1">
+                          <div
+                            key={subtask._id}
+                            className="flex flex-col md:flex-row items-start md:items-center justify-between border p-2 mt-2 rounded"
+                          >
                             {isEditing ? (
                               <>
                                 <input
@@ -344,29 +363,37 @@ export default function TasksPage() {
                                   onChange={(e) =>
                                     setEditingSubtask({ ...editingSubtask, newTitle: e.target.value })
                                   }
-                                  className="text-sm border p-1"
+                                  className="border p-1 mb-2 md:mb-0 flex-1"
                                 />
-                                <button
-                                  onClick={() => handleSaveEditSubtask(task._id, subtask._id)}
-                                  className="bg-green-500 text-white p-1 rounded ml-1 text-xs"
-                                >
-                                  Guardar
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    setEditingSubtask({ taskId: null, subtaskId: null, newTitle: "" })
-                                  }
-                                  className="bg-gray-500 text-white p-1 rounded ml-1 text-xs"
-                                >
-                                  Cancelar
-                                </button>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleSaveEditSubtask(task._id, subtask._id)}
+                                    className="bg-green-500 text-white p-1 rounded text-xs"
+                                  >
+                                    Guardar
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setEditingSubtask({ taskId: null, subtaskId: null, newTitle: "" })
+                                    }
+                                    className="bg-gray-500 text-white p-1 rounded text-xs"
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
                               </>
                             ) : (
                               <>
-                                <span className={`text-sm ${subtask.status === "completed" ? "line-through" : ""}`}>
+                                <span
+                                  className={`text-sm flex-1 ${
+                                    subtask.status === "completed"
+                                      ? "line-through text-green-600"
+                                      : "text-yellow-600"
+                                  }`}
+                                >
                                   {subtask.title}
                                 </span>
-                                <div>
+                                <div className="flex gap-2 mt-2 md:mt-0">
                                   <button
                                     onClick={() =>
                                       setEditingSubtask({
@@ -375,13 +402,15 @@ export default function TasksPage() {
                                         newTitle: subtask.title,
                                       })
                                     }
-                                    className="bg-yellow-500 text-white p-1 rounded mr-1 text-xs"
+                                    className="bg-yellow-500 text-white p-1 rounded text-xs"
                                   >
                                     Editar
                                   </button>
                                   <button
-                                    onClick={() => handleToggleSubtaskStatus(task._id, subtask)}
-                                    className="bg-blue-500 text-white p-1 rounded mr-1 text-xs"
+                                    onClick={() =>
+                                      handleToggleSubtaskStatus(task._id, subtask)
+                                    }
+                                    className="bg-blue-500 text-white p-1 rounded text-xs"
                                   >
                                     Tarea Completada
                                   </button>
@@ -406,7 +435,7 @@ export default function TasksPage() {
                         value={newSubtasks[task._id] || ""}
                         onChange={(e) => handleNewSubtaskChange(task._id, e.target.value)}
                         placeholder="Agregar subtarea..."
-                        className="border p-1 rounded mr-2 text-sm"
+                        className="border p-1 rounded mr-2 text-sm flex-1"
                       />
                       <button
                         onClick={() => handleAddSubtask(task._id)}
@@ -418,14 +447,17 @@ export default function TasksPage() {
                   </div>
                   {/* Gestión de Comentarios */}
                   <div className="mt-4 ml-4">
-                    <h3 className="text-md font-semibold">Comentarios</h3>
+                    <h3 className="text-lg font-medium">Comentarios</h3>
                     {task.comments && task.comments.length > 0 ? (
                       task.comments.map((comment) => {
                         const isEditingComment =
                           editingComment.taskId === task._id &&
                           editingComment.commentId === comment._id;
                         return (
-                          <div key={comment._id} className="flex items-center justify-between border p-1 mt-1">
+                          <div
+                            key={comment._id}
+                            className="flex flex-col md:flex-row items-start md:items-center justify-between border p-2 mt-2 rounded"
+                          >
                             {isEditingComment ? (
                               <>
                                 <input
@@ -434,30 +466,34 @@ export default function TasksPage() {
                                   onChange={(e) =>
                                     setEditingComment({ ...editingComment, newText: e.target.value })
                                   }
-                                  className="text-sm border p-1"
+                                  className="border p-1 text-sm mb-2 md:mb-0 flex-1"
                                 />
-                                <button
-                                  onClick={() => handleSaveEditComment(task._id, comment._id)}
-                                  className="bg-green-500 text-white p-1 rounded ml-1 text-xs"
-                                >
-                                  Guardar
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    setEditingComment({ taskId: null, commentId: null, newText: "" })
-                                  }
-                                  className="bg-gray-500 text-white p-1 rounded ml-1 text-xs"
-                                >
-                                  Cancelar
-                                </button>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() =>
+                                      handleSaveEditComment(task._id, comment._id)
+                                    }
+                                    className="bg-green-500 text-white p-1 rounded text-xs"
+                                  >
+                                    Guardar
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setEditingComment({ taskId: null, commentId: null, newText: "" })
+                                    }
+                                    className="bg-gray-500 text-white p-1 rounded text-xs"
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
                               </>
                             ) : (
                               <>
-                                <span className="text-sm">{comment.text}</span>
-                                <div>
+                                <span className="text-sm flex-1">{comment.text}</span>
+                                <div className="flex gap-2 mt-2 md:mt-0">
                                   <button
                                     onClick={() => handleEditComment(task._id, comment)}
-                                    className="bg-yellow-500 text-white p-1 rounded mr-1 text-xs"
+                                    className="bg-yellow-500 text-white p-1 rounded text-xs"
                                   >
                                     Editar
                                   </button>
@@ -484,7 +520,7 @@ export default function TasksPage() {
                           setNewComment((prev) => ({ ...prev, [task._id]: e.target.value }))
                         }
                         placeholder="Agregar comentario..."
-                        className="border p-1 rounded mr-2 text-sm"
+                        className="border p-1 rounded mr-2 text-sm flex-1"
                       />
                       <button
                         onClick={() => handleAddComment(task._id)}

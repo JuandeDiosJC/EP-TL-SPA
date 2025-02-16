@@ -20,14 +20,31 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-2xl font-bold mb-4">Iniciar Sesión</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 w-64">
-        <input type="email" placeholder="Email" {...register("email")} className="border p-2 rounded" />
-        <input type="password" placeholder="Contraseña" {...register("password")} className="border p-2 rounded" />
-        {error && <p className="text-red-500">{error}</p>}
-        <button className="bg-blue-500 text-white p-2 rounded" type="submit">Ingresar</button>
-      </form>
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-blue-100 p-4">
+      <div className="w-full max-w-sm bg-white p-8 rounded shadow-lg">
+        <h1 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email"
+            {...register("email")}
+            className="border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            {...register("password")}
+            className="border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition-colors"
+          >
+            Ingresar
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
