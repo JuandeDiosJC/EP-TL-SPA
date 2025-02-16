@@ -155,7 +155,7 @@ exports.deleteSubtask = async (req, res) => {
 // Agregar un comentario
 exports.addComment = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // ID de la tarea
     const { text } = req.body;
     if(!text) {
       return res.status(400).json({ msg: "El comentario no puede estar vacío" });
@@ -164,12 +164,13 @@ exports.addComment = async (req, res) => {
     if(!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
+    //Agrega el comentario
     task.comments.push({ text });
     await task.save();
     res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error al agregar el comentario" });
+    console.error("Error al agregar el comentario:", error);
+    res.status(500).json({ msg: "Error al agregar el comentario", error: error.message });
   }
 };
 
@@ -190,8 +191,8 @@ exports.updateComment = async (req, res) => {
     await task.save();
     res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error al actualizar el comentario" });
+    console.error("Error al actualizar el comentario:", error);
+    res.status(500).json({ msg: "Error al actualizar el comentario", error: error.message });
   }
 };
 
@@ -200,18 +201,19 @@ exports.deleteComment = async (req, res) => {
   try {
     const { id, commentId } = req.params;
     const task = await Task.findOne({ _id: id, user: req.user.userId });
-    if(!task) {
+    if (!task) {
       return res.status(404).json({ msg: "Tarea no encontrada" });
     }
     const comment = task.comments.id(commentId);
-    if(!comment) {
+    if (!comment) {
       return res.status(404).json({ msg: "Comentario no encontrado" });
     }
-    comment.remove();
+    // En lugar de comment.remove(), usamos pull() para eliminar por _id
+    task.comments.pull(commentId);
     await task.save();
     res.json(task);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error al eliminar el comentario" });
+    console.error("Error al eliminar el comentario:", error);
+    res.status(500).json({ msg: "Error al eliminar el comentario", error: error.message });
   }
 };

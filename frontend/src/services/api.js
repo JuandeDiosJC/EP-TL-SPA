@@ -66,22 +66,33 @@ export const deleteSubtask = async (taskId, subtaskId, token) => {
 
 // Comentarios
 export const addComment = async (taskId, commentData, token) => {
-  const { data } = await axios.post(`${API_URL}/tasks/${taskId}/comments`, commentData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const { data } = await axios.post(
+    `${API_URL}/tasks/${taskId}/comments`,
+    commentData,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return data;
 };
 
 export const updateComment = async (taskId, commentId, updateData, token) => {
-  const { data } = await axios.put(`${API_URL}/tasks/${taskId}/comments/${commentId}`, updateData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const { data } = await axios.put(
+    `${API_URL}/tasks/${taskId}/comments/${commentId}`,
+    updateData,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return data;
 };
 
 export const deleteComment = async (taskId, commentId, token) => {
-  const { data } = await axios.delete(`${API_URL}/tasks/${taskId}/comments/${commentId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const { data } = await axios.delete(
+    `${API_URL}/tasks/${taskId}/comments/${commentId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return data;
 };
